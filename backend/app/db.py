@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
 
 
 def create_db_engine(settings: Settings):
-    args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
+    args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {"prepare_threshold": None}
     return create_engine(settings.database_url, connect_args=args, pool_pre_ping=True)
 
 
