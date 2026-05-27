@@ -1,4 +1,4 @@
-# 📡 RoleDrop Radar
+# RoleDrop Radar
 
 An enterprise-ready, low-latency, early-opportunity alert platform. RoleDrop Radar monitors official company career boards (Ashby, Greenhouse, Lever, Google Careers), standardizes job ingestion, matches listings to candidate signal profiles using a hybrid AI pipeline, and dispatches instant push notifications via Telegram and SMTP.
 
@@ -6,7 +6,7 @@ Designed with strict **Forward Deployed Engineer (FDE)** patterns: pluggable con
 
 ---
 
-## 🛠️ Key Architectural Strengths
+## Key Architectural Strengths
 
 * **Pluggable Source Adapter Ingestion**: Decoupled connector modules standardizing unstructured third-party job postings (leveraging Ashby, Greenhouse, Lever, and Google Board APIs) into a strict, unified `NormalizedJob` schema.
 * **Hybrid Matching & Cost Mitigation**: Reserves expensive Large Language Model (Gemini 2.5 Flash Lite) tokens strictly for high-probability matching roles. A fast local regular-expression pre-filtering engine suppresses low-fit profiles and senior-level roles beforehand, **saving up to 88% in Gemini token overhead costs** ($0.04/job down to $0.0003/job).
@@ -16,7 +16,7 @@ Designed with strict **Forward Deployed Engineer (FDE)** patterns: pluggable con
 
 ---
 
-## 📂 System Architecture
+## System Architecture
 
 ```text
 ├── backend/
@@ -33,13 +33,13 @@ Designed with strict **Forward Deployed Engineer (FDE)** patterns: pluggable con
 ├── frontend/
 │   ├── src/
 │   │   ├── App.tsx               # Dashboard with telemetry sandbox & detail drawer
-│   │   ├── styles.css            # Cyber-dark custom glassmorphism design tokens
+│   │   ├── styles.css            # Cyber-dark custom glassmorphic design tokens
 │   │   └── lib/api.ts            # Typed HTTP API Client
 ```
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Local Orchestration (Windows)
 We have provided a double-clickable dev server launcher in the root directory. To spin up both the FastAPI backend and Vite React frontend concurrently in separate windows, simply execute:
@@ -79,7 +79,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 🔒 Configuration & Integrations
+## Configuration & Integrations
 
 Configure these in the root `.env` or as deployment environment variables:
 
@@ -93,7 +93,7 @@ Configure these in the root `.env` or as deployment environment variables:
 
 ---
 
-## 🧪 Testing & Verification
+## Testing & Verification
 
 To verify contract boundaries, execution latency, and matching rules, run the standard suite:
 
