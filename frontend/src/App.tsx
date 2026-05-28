@@ -617,26 +617,32 @@ function Opportunities({
     let currentStep = 0;
     const interval = setInterval(() => {
       if (currentStep < steps.length) {
-        setTerminalLogs(prev => [...prev, steps[currentStep]]);
+        const step = steps[currentStep];
+        if (step) {
+          setTerminalLogs(prev => [...prev, step]);
+        }
         currentStep++;
       } else {
         clearInterval(interval);
         // Execute real scan API
         api.runMonitor()
           .then(async (summary) => {
+            const jobsSeen = summary?.jobs_seen ?? 0;
+            const newJobs = summary?.new_jobs ?? 0;
             setTerminalLogs(prev => [
               ...prev,
-              { text: `[SUCCESS] Live scan completed! Seen: ${summary.jobs_seen} roles, New: ${summary.new_jobs} added.`, type: 'success' as const }
+              { text: `[SUCCESS] Live scan completed! Seen: ${jobsSeen} roles, New: ${newJobs} added.`, type: 'success' as const }
             ]);
-            setStatus(`Scan complete: ${summary.jobs_seen} roles checked, ${summary.new_jobs} newly found.`);
+            setStatus(`Scan complete: ${jobsSeen} roles checked, ${newJobs} newly found.`);
             await reload();
           })
           .catch((err) => {
+            const errorMsg = (err as Error)?.message || "Unknown error";
             setTerminalLogs(prev => [
               ...prev,
-              { text: `[ERROR] Scan exception: ${(err as Error).message}`, type: 'error' as const }
+              { text: `[ERROR] Scan exception: ${errorMsg}`, type: 'error' as const }
             ]);
-            setStatus(`${(err as Error).message} Scheduled cloud scans continue when configured.`);
+            setStatus(`${errorMsg} Scheduled cloud scans continue when configured.`);
           })
           .finally(() => {
             setIsScanning(false);
@@ -690,10 +696,10 @@ function Opportunities({
       {/* Terminal Display Block */}
       {isScanning && (
         <div className="terminal-block" style={{ marginTop: '0.5rem' }}>
-          {terminalLogs.map((log, index) => (
-            <div className={`terminal-line ${log.type}`} key={index}>
+          {terminalLogs && terminalLogs.filter(Boolean).map((log, index) => (
+            <div className={`terminal-line ${log.type || 'info'}`} key={index}>
               <Icons.Terminal />
-              {log.text}
+              {log.text || ""}
             </div>
           ))}
           <div ref={terminalEndRef} />
@@ -1010,10 +1016,10 @@ function ObservabilityPanel() {
           </button>
         </div>
         <div className="terminal-block" style={{ height: '170px', marginTop: '1rem', maxHeight: '170px' }}>
-          {logs.map((log, index) => (
-            <div className={`terminal-line ${log.type === 'warn' ? 'error' : log.type === 'success' ? 'success' : 'info'}`} key={index} style={{ color: log.type === 'warn' ? 'var(--amber-bright)' : log.type === 'error' ? 'var(--red-bright)' : log.type === 'success' ? 'var(--green-bright)' : '#60a5fa' }}>
+          {logs && logs.filter(Boolean).map((log, index) => (
+            <div className={`terminal-line ${(log.type || 'info') === 'warn' ? 'error' : (log.type || 'info') === 'success' ? 'success' : 'info'}`} key={index} style={{ color: (log.type || 'info') === 'warn' ? 'var(--amber-bright)' : (log.type || 'info') === 'error' ? 'var(--red-bright)' : (log.type || 'info') === 'success' ? 'var(--green-bright)' : '#60a5fa' }}>
               <Icons.Terminal />
-              {log.text}
+              {log.text || ""}
             </div>
           ))}
           <div ref={consoleEndRef} />
