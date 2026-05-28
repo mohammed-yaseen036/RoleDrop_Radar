@@ -89,9 +89,12 @@ async def run_monitor(db: Session, settings: Settings) -> MonitorSummary:
     sources = list(
         db.scalars(
             select(Source)
-            .join(Subscription)
-            .where(Subscription.enabled.is_(True))
-            .distinct()
+            .where(
+                Source.id.in_(
+                    select(Subscription.source_id)
+                    .where(Subscription.enabled.is_(True))
+                )
+            )
         )
     )
     for source in sources:
