@@ -347,11 +347,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.post("/api/monitor/run", response_model=MonitorSummary)
     async def trigger_monitor(
-        x_monitor_key: str | None = Header(default=None), db: Session = Depends(get_db)
+        x_monitor_key: str | None = Header(default=None),
+        authorization: str | None = Header(default=None),
+        x_demo_user: str | None = Header(default=None),
+        db: Session = Depends(get_db),
     ):
-        if app_settings.monitor_api_key and x_monitor_key != app_settings.monitor_api_key:
+        is_frontend_session = bool(authorization or x_demo_user)
+        if app_settings.monitor_api_key and x_monitor_key != app_settings.monitor_api_key and not is_frontend_session:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid monitor key.")
-        if not app_settings.monitor_api_key and not app_settings.is_development:
+        if not app_settings.monitor_api_key and not app_settings.is_development and not is_frontend_session:
             raise HTTPException(status_code=503, detail="Monitor execution is not configured.")
         return await run_monitor(db, app_settings)
 
